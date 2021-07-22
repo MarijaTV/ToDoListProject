@@ -7,9 +7,25 @@ public class ToDoListController : Controller
 {
     public IActionResult Index()
     {
+
+        string readModels = System.IO.File.ReadAllText("ToDoList.json");
+        List<ToDoListModel> receivedModels = JsonConvert.DeserializeObject<List<ToDoListModel>>(readModels);
+        if (receivedModels == null)
+        {
+            receivedModels = new();
+        }
+
+        return View(receivedModels);
+    }
+    //GET
+    public IActionResult Create()
+    {
         return View();
     }
-    public IActionResult SubmitName(ToDoListModel model)
+
+    //POST
+    [HttpPost]
+    public IActionResult Create(ToDoListModel model)
     {
         //Reading
         string readModels = System.IO.File.ReadAllText("ToDoList.json");
@@ -25,6 +41,8 @@ public class ToDoListController : Controller
         string jsonModels = JsonConvert.SerializeObject(receivedModels);
 
         System.IO.File.WriteAllText("ToDoList.json", jsonModels);
-        return View("ToDoListDisplay", receivedModels);
+
+        //return View("Index", receivedModels);
+        return RedirectToAction("Index");
     }
 }
